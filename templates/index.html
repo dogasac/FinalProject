@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('language', 'en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSN</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+  
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 10px; 
+        border-bottom: 1px solid #ccc; 
+        white-space: normal; 
+    }
+
+        .navbar-brand img {
+            width: 50px;
+        }
+        .search-bar {
+            flex-grow: 1;
+            max-width: 600px;
+        }
+        .search-bar input {
+            width: 100%;
+            border-radius: 0;
+        }
+        .search-bar button {
+            border-radius: 0;
+        }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-nav .nav-item {
+            margin-left: 15px;
+        }
+        .navbar-nav .fa {
+            font-size: 24px;
+        }
+        .notification-icon {
+            position: relative;
+        }
+        .notification-icon::after {
+            content: '1';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-size: 12px;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+        }
+        .navbar-collapse {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .navbar-nav.ml-auto {
+            flex-grow: 0;
+        }
+        .dropdown-menu {
+            width: 300px;
+        }
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .logout-link {
+            margin-left: 10px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+        }
+        .news-section {
+            margin-top: 20px;
+        }
+        .news-article {
+            position: relative;
+        }
+        .news-article h2 {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .category-bar {
+            display: flex;
+            justify-content: center;
+            background-color: #f8f9fa;
+            padding: 10px 0;
+        }
+        .category-bar a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #000;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <a class="navbar-brand" href="#">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/2015_MSN_logo.svg/640px-2015_MSN_logo.svg.png" alt="Logo">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="search-bar mx-3">
+                <form action="{{ url_for('search') }}" method="get" class="input-group">
+                    <input type="text" class="form-control" name="query" placeholder="Search news...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <ul class="navbar-nav ml-auto">
+            {% if current_user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-bell notification-icon"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                        <h6 class="dropdown-header">Bildiriler</h6>
+                        <a class="dropdown-item" href="#">Erken seçim istemeyen Özel'i haklı çıkaran anket - Haberler.com</a>
+                       
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-cog"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingsDropdown">
+                        <h6 class="dropdown-header">Dili ve İçeriği Değiştir</h6>
+                        <div class="dropdown-item1">
+                            <form action="{{ url_for('set_language') }}" method="post">
+                                <select class="form-control" name="language" onchange="this.form.submit()">
+                                    <option value="en" {% if session.get('language') == 'tr' %}selected{% endif %}>Türkçe</option>
+                                    <option value="tr" {% if session.get('language') == 'en' %}selected{% endif %}>English</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <img src="{{ current_user.profile_pic }}" alt="Profile Picture" class="profile-pic">
+                </li>
+                <li class="nav-item">
+                    <a class="logout-link" href="{{ url_for('logout') }}">Çıkış Yap</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('login') }}"><i class="fa fa-user-circle"></i> Giriş Yap</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
+
+    <!-- Category Bar -->
+    <div class="category-bar">
+        <a href="#">Spor</a>
+        <a href="#">Finans</a>
+        <a href="#">Haber</a>
+        <a href="#">Eğlence</a>
+        <a href="#">Astroloji</a>
+        <a href="#">Otomobil</a>
+        <a href="#">Yaşam</a>
+        <a href="#">Hava Durumu</a>
+        <a href="#">Video</a>
+        <a href="#">Alışveriş</a>
+    </div>
+
+    <!-- News Articles -->
+    <div class="container news-section">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="news-article">
+                    <img src="https://image.cnnturk.com/i/cnnturk/75/740x416/652db00aa468600accbd2da4.jpg" class="img-fluid" alt="News Image">
+                    <h2>Altın, ABD'den gelen karışık sinyallerin etkisinde</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="news-article">
+                    <img src="https://www.yediverenbilisim.com.tr/wp-content/uploads/2019/01/gunes-enerji-teknolojileri-960x480.jpg" class="img-fluid" alt="News Image">
+                    <h4>Eviniz İçin Güneş Enerjisi</h4>
+                    <p>Güneş enerjisi kullanarak evinizin enerji maliyetlerini düşürün...</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card">
+                    <img src="https://images9.engageya.com/d7/af/website_250642/a1/29/b5/images9.engageya.com.engageya6ae47137-981e-4af1-8a76-ae469da67bd2_new_post_image_403205_29.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Ticaretten para kazandıran yapay zeka uygulaması!</h5>
+                        <p class="card-text">PerspectivePulso</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card">
+                    <img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB1n28jE.img?w=628&h=372&q=90&m=6&f=jpg&u=t" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Balık yağını böyle kullanmakta fayda var!</h5>
+                        <p class="card-text">Milliyet</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card">
+                    <img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB1neRRh.img?w=628&h=372&q=90&m=6&f=jpg&u=t" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Gram altın ne kadar oldu ?</h5>
+                        <p class="card-text">T24</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Diğer haber kutucukları -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-4">
+        <p>&copy; 2024 News Portal. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

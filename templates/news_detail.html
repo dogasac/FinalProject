@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ news.title }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+           .navbar-brand img {
+            width: 50px;
+        }
+        .search-bar {
+            flex-grow: 1;
+            max-width: 600px;
+        }
+        .search-bar input {
+            width: 100%;
+            border-radius: 0;
+        }
+        .search-bar button {
+            border-radius: 0;
+        }
+      
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+
+        }
+        .navbar-nav .nav-item {
+            margin-left: 15px;
+        }
+        .navbar-nav .fa {
+            font-size: 24px;
+        }
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+           
+        }
+        .navbar-collapse {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .navbar-nav.ml-auto {
+            flex-grow: 0;
+        }
+        .dropdown-menu {
+            width: 300px;
+        }
+        body {
+            background: linear-gradient(to left, #e1ebf0, #f1f1f1); 
+        }
+        .news-detail .card-img {
+           width: 700px;
+           height: 400px;
+           object-fit: cover;
+           border-radius: 5px;
+       }
+       .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        }
+
+        .icon-btn img {
+         width: 30px; /* Adjust size as needed */
+         height: 30px;
+       
+        }
+       .social-buttons {
+        position: fixed;
+            left: 150px;
+            top: 30%;
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+       }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/2015_MSN_logo.svg/640px-2015_MSN_logo.svg.png" alt="Logo">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="search-bar mx-3">
+                <form action="{{ url_for('search') }}" method="get" class="input-group">
+                    <input type="text" class="form-control" name="query" placeholder="Search news...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <ul class="navbar-nav ml-auto">
+            {% if current_user.is_authenticated %}
+              
+                <li class="nav-item">
+                    <img src="{{ current_user.profile_pic }}" alt="Profile Picture" class="profile-pic">
+                </li>
+                <li class="nav-item">
+                    <a class="logout-link" href="{{ url_for('logout') }}">Çıkış Yap</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('login') }}"><i class="fa fa-user-circle"></i> Giriş Yap</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+    <div class="container mt-4">
+        <div class="news-detail">
+            <h1>{{ news.title }}</h1>
+            <img src="{{ news.image_url }}" class = "card-img" alt="News Image">
+            <p>{{ news.content }}</p>
+            <p><small>Source: {{ news.source }}</small></p>
+
+            <div class="social-buttons">
+                <form action="{{ url_for('like_news') }}" method="post">
+                    <input type="hidden" name="news_id" value="{{ news.id }}">
+                    <input type="hidden" name="like_type" value="like">
+                    <button type="submit" class="icon-btn">
+                        <img src="/static/icons/like.png" alt="Like">
+                    </button>
+                </form>
+                <form action="{{ url_for('like_news') }}" method="post">
+                    <input type="hidden" name="news_id" value="{{ news.id }}">
+                    <input type="hidden" name="like_type" value="dislike">
+                    <button type="submit" class="icon-btn">
+                        <img src="/static/icons/dislike.png" alt="Dislike">
+                    </button>
+                </form>
+            <a href="https://twitter.com/intent/tweet?url={{ url_for('news_detail', news_id=news.id, _external=True) }}&text={{ news.title }}" class="icon-btn" target="_blank">
+                 <img src="/static/icons/share.png" alt="Share on Twitter">
+                </a>
+            
+        </div>
+    </div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
